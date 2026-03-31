@@ -1,0 +1,54 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies for APIs
+      run: dotnet restore
+      working-directory: src
+
+    - name: Build APIs
+      run: dotnet build --configuration Release --no-restore
+      working-directory: src
+
+    - name: Test APIs
+      run: dotnet test --configuration Release --no-build --verbosity normal
+      working-directory: src
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: src/ContosoTraders.Ui.Website/package-lock.json
+
+    - name: Install UI dependencies
+      run: npm ci
+      working-directory: src/ContosoTraders.Ui.Website
+
+    - name: Lint UI
+      run: npm run lint
+      working-directory: src/ContosoTraders.Ui.Website
+
+    - name: Test UI
+      run: npm test -- --watchAll=false
+      working-directory: src/ContosoTraders.Ui.Website
+
+    - name: Build UI
+      run: npm run build
+      working-directory: src/ContosoTraders.Ui.Website
