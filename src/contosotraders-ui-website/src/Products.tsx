@@ -8,7 +8,11 @@ interface Product {
   category: string;
 }
 
-const Products: React.FC = () => {
+interface ProductsProps {
+  addToCart: (product: Product) => void;
+}
+
+const Products: React.FC<ProductsProps> = ({ addToCart }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +66,7 @@ const Products: React.FC = () => {
               padding: '8px 16px',
               borderRadius: '4px',
               cursor: 'pointer'
-            }}>
+            }} onClick={() => addToCart(product)}>
               Add to Cart
             </button>
           </div>

@@ -16,7 +16,7 @@ jobs:
     - name: Set up .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.x'
 
     - name: Restore dependencies for APIs
       run: dotnet restore
@@ -30,24 +30,82 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal
       working-directory: src
 
+    - name: Publish API
+      run: dotnet publish ContosoTraders.Api/ContosoTraders.Api.csproj --configuration Release --output ./publish/api
+      working-directory: src
+
+    - name: Upload API artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-artifact
+        path: src/publish/api/
+
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: src/ContosoTraders.Ui.Website/package-lock.json
+        cache-dependency-path: src/contosotraders-ui-website/package-lock.json
 
     - name: Install UI dependencies
       run: npm ci
-      working-directory: src/ContosoTraders.Ui.Website
-
-    - name: Lint UI
-      run: npm run lint
-      working-directory: src/ContosoTraders.Ui.Website
+      working-directory: src/contosotraders-ui-website
 
     - name: Test UI
       run: npm test -- --watchAll=false
-      working-directory: src/ContosoTraders.Ui.Website
+      working-directory: src/contosotraders-ui-website
+
+    - name: Build UI
+      run: npm run build
+      working-directory: src/contosotraders-ui-website
+
+    - name: Upload UI build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ui-build
+        path: src/contosotraders-ui-website/build/
+
+  deploy-ui:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+    - name: Download UI build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ui-build
+        path: ./ui-build
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./ui-build
+
+  deploy-api:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+    - name: Download API artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: api-artifact
+        path: ./api-artifact
+
+    - name: Create deployment package
+      run: |
+        mkdir -p deployment
+        cp -r api-artifact/* deployment/
+        echo "API deployment package created"
+
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-deployment
+        path: deployment/
 
     - name: Build UI
       run: npm run build

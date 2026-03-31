@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "CqE776sun6M=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\demouser\\dev\\e-commerce\\ContosoTraders\\ContosoTraders.Api\\ContosoTraders.Api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\demouser\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.14\\microsoft.aspnetcore.openapi.9.0.14.nupkg.sha512",
+    "C:\\Users\\demouser\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

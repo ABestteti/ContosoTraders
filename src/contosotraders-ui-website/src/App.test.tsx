@@ -10,6 +10,6 @@ test('renders Contoso Traders products page', () => {
 
 test('renders product cards', () => {
   render(<App />);
-  const laptopElement = screen.getByText(/Laptop/i);
+  const laptopElement = screen.getByText('Laptop');
   expect(laptopElement).toBeInTheDocument();
 });
