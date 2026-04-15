@@ -109,7 +109,7 @@ jobs:
       continue-on-error: true
 
     - name: Upload security scan results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: security-scan-results
         path: |
@@ -207,7 +207,7 @@ jobs:
       working-directory: src
 
     - name: Upload API artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: api-artifact
         path: src/publish/api/
@@ -232,7 +232,7 @@ jobs:
       working-directory: src/contosotraders-ui-website
 
     - name: Upload UI build artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: ui-build
         path: src/contosotraders-ui-website/build/
@@ -274,7 +274,7 @@ jobs:
         echo "API deployment package created"
 
     - name: Upload deployment package
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: api-deployment
         path: deployment/
